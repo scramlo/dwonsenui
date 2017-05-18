@@ -20,7 +20,7 @@
 
     function getArticles() {
 
-      var articleList = page.querySelector('#article-list');
+      var articlesList = page.querySelector('#article-list');
       var start = articlesList.getElementsByTagName("ons-list-item").length;
 
       var request = new XMLHttpRequest();
@@ -35,7 +35,7 @@
           for (i=0;i<10;i++) {
             var li = document.createElement("ons-list-item");
             li.innerHTML = json[i].title;
-            articleList.appendChild(li);
+            articlesList.appendChild(li);
           }
         }
       }
@@ -44,7 +44,9 @@
 
     if (page.id === 'home') {
       getArticles();
-
+      page.querySelector('#articles-load').onclick = function() {
+        getArticles();
+      };
     }
 
   });
@@ -62,9 +64,9 @@
           Home
         </div>
       </ons-toolbar>
-      <ons-list>
-        <ons-lazy-repeat id="article-list"></ons-lazy-repeat>
+      <ons-list id="article-list">
       </ons-list>
+      <ons-button modifier="large--cta" id="articles-load">Load More</ons-button>
     </ons-page>
   </ons-template>
 
