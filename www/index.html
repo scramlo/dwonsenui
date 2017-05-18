@@ -13,133 +13,77 @@
   <link rel="stylesheet" href="css/style.css">
 
   <script>
-    ons.ready(function() {
 
-      //Get Articles Function
-      function getArticles() {
-        //console.log("getArticles() started.");
+  document.addEventListener('init', function(event) {
 
-        var request = new XMLHttpRequest();
+    var page = event.target;
 
-        request.open('POST', 'http://drydenwire.com/api/json-news');
+    function getArticles() {
 
-        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      var articleList = page.querySelector('#article-list');
+      var start = articlesList.getElementsByTagName("ons-list-item").length;
 
-        request.onreadystatechange = function () {
-          var DONE = this.DONE || 4;
-          //console.log("Request Status: " + request.status);
-          if (this.readyState === DONE){
-            //console.log("Response Text: " + request.responseText);
-            populateArticles(request.responseText);
+      var request = new XMLHttpRequest();
+
+      request.open('POST', 'http://drydenwire.com/api/json-news');
+      request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+      request.onreadystatechange = function () {//
+        var DONE = this.DONE || 4;
+        if (this.readyState === DONE) {
+          json = JSON.parse(request.responseText);
+          for (i=0;i<10;i++) {
+            var li = document.createElement("ons-list-item");
+            li.innerHTML = json[i].title;
+            articleList.appendChild(li);
           }
-        };
-
-        var data = 'startResults=0';
-        request.send(data);
-
-        //console.log("Data Sent: " + data);
-
-      } //end get articles function
-
-      function populateArticles(json) {
-        json = JSON.parse(json);
-        console.log("populateArticles() started");
-        //this will contain the articles as an array
-        var articlesListHTMLArr = [];
-
-        //this will contain the articles concantenated as HTML
-        var articlesListHTML = "";
-
-        for (i=0;i<10;i++) {
-          //Create simple variables for articles.
-          var articleTitle = json[i].title;
-          var articleImageURL = json[i].fImageUrl;
-          var articleDate = json[i].date;
-          var articleBody = json[i].body;
-          //add the full URL path to body images.
-          //var articleBody = articleBody.replace(/\/site/g, "http://drydenwire.com/site");
-
-          articlesListHTMLArr.push("<ons-list>");
-          articlesListHTMLArr.push("<ons-list-item class=\"list__item--tappable list__item__line-height\" modifier=\"chevron\">");
-          articlesListHTMLArr.push(articleTitle);
-          articlesListHTMLArr.push("</ons-list-item>");
-          articlesListHTMLArr.push("</ons-list>");
         }
+      }
+      request.send("startResults=" + start);
+    }
 
-        articlesListHTML = articlesListHTMLArr.join("");
-
-        document.getElementById("article-list").innerHTML = articlesListHTML;
-
-      } //end populate articles function
-
-      //Start app by retrieving articles
+    if (page.id === 'home') {
       getArticles();
-    });
 
-    window.fn = {};
+    }
 
-    window.fn.open = function() {
-      var menu = document.getElementById('menu');
-      menu.open();
-    };
-
-    window.fn.load = function(page) {
-      var content = document.getElementById('content');
-      var menu = document.getElementById('menu');
-      content.load(page)
-        .then(menu.close.bind(menu));
-    };
+  });
 
   </script>
 </head>
 <body>
-  <ons-splitter>
-    <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
-      <ons-page>
-        <ons-list>
-          <ons-list-item id="nav-home" onclick="fn.load('home.html')" tappable>
-            <ons-icon icon="home"></ons-icon>&nbsp;Home
-          </ons-list-item>
-          <ons-list-item onclick="fn.load('obituaries.html')" tappable>
-            <ons-icon icon="bank"></ons-icon>&nbsp;Obituaries
-          </ons-list-item>
-          <ons-list-item onclick="fn.load('headlines.html')" tappable>
-            <ons-icon icon="list"></ons-icon>&nbsp;Headlines
-          </ons-list-item>
-          <ons-list-item onclick="fn.load('advertise.html')" tappable>
-                <ons-icon icon="usd"></ons-icon>&nbsp;Advertise
-          </ons-list-item>
-        </ons-list>
-      </ons-page>
-    </ons-splitter-side>
-    <ons-splitter-content id="content" page="home.html"></ons-splitter-content>
-  </ons-splitter>
+
+  <ons-navigator id="navigator" page="home.html"></ons-navigator>
 
   <ons-template id="home.html">
-    <ons-page>
+    <ons-page id="home">
       <ons-toolbar>
-        <div class="left">
-          <ons-toolbar-button onclick="fn.open()">
-            <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
-          </ons-toolbar-button>
-        </div>
         <div class="center">
-          Main
+          Home
         </div>
       </ons-toolbar>
-      <div id="article-list">
-      </div>
+      <ons-list>
+        <ons-lazy-repeat id="article-list"></ons-lazy-repeat>
+      </ons-list>
+    </ons-page>
+  </ons-template>
+
+  <ons-template id="art-1.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="center">
+          Article 1
+        </div>
+        <div class="left">
+          <ons-back-button>Back</ons-back-button>
+        </div>
+      </ons-toolbar>
     </ons-page>
   </ons-template>
 
   <ons-template id="obituaries.html">
   <ons-page>
     <ons-toolbar>
-      <div class="left">
-        <ons-toolbar-button onclick="fn.open()">
-          <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
-        </ons-toolbar-button>
-      </div>
       <div class="center">
         Obituaries
       </div>
@@ -150,11 +94,6 @@
   <ons-template id="headlines.html">
   <ons-page>
     <ons-toolbar>
-      <div class="left">
-        <ons-toolbar-button onclick="fn.open()">
-          <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
-        </ons-toolbar-button>
-      </div>
       <div class="center">
         Headlines
       </div>
@@ -176,6 +115,22 @@
     </ons-toolbar>
   </ons-page>
   </ons-template>
+
+
+  <ons-tabbar>
+    <ons-tab label="Tab 1" page="home.html" active>
+      <ons-icon icon="home"></ons-icon>&nbsp;
+    </ons-tab>
+    <ons-tab label="Tab 2" page="obituaries.html">
+      <ons-icon icon="bank"></ons-icon>&nbsp;
+    </ons-tab>
+    <ons-tab label="Tab 1" page="headlines.html">
+      <ons-icon icon="list"></ons-icon>&nbsp;
+    </ons-tab>
+    <ons-tab label="Tab 2" page="advertise.html">
+      <ons-icon icon="usd"></ons-icon>&nbsp;
+    </ons-tab>
+  </ons-tabbar>
 
 </body>
 </html>
