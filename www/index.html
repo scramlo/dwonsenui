@@ -17,36 +17,48 @@
   document.addEventListener('init', function(event) {
 
     var page = event.target;
+    var articlesList = page.querySelector('#article-list');
+    var startResults = 0;
 
     function getArticles() {
-
-      var articlesList = page.querySelector('#article-list');
-      var start = articlesList.getElementsByTagName("ons-list-item").length;
 
       var request = new XMLHttpRequest();
 
       request.open('POST', 'http://drydenwire.com/api/json-news');
       request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
+      request.send("startResults=" + startResults);
       request.onreadystatechange = function () {//
         var DONE = this.DONE || 4;
         if (this.readyState === DONE) {
           json = JSON.parse(request.responseText);
+          console.log(json);
+
           for (i=0;i<10;i++) {
             var li = document.createElement("ons-list-item");
             li.innerHTML = json[i].title;
             articlesList.appendChild(li);
+            var template = document.createElement("ons-template");
+            var page = document.createElement("ons-page");
+            template.id = "article-template-" + startResults;
+            page.id = "article-page-" + startResults;
+            template.appendChild(page);
+            document.body.appendChild(template);
+            startResults += 1;
           }
+
         }
       }
-      request.send("startResults=" + start);
     }
 
     if (page.id === 'home') {
+      //initially load articles
       getArticles();
+
+      //event handler to load more articles with button
       page.querySelector('#articles-load').onclick = function() {
         getArticles();
       };
+
     }
 
   });
