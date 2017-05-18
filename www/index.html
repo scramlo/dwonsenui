@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+  <script src="components/loader.js"></script>
+  <script src="lib/onsenui/js/onsenui.min.js"></script>
+
+  <link rel="stylesheet" href="components/loader.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script>
+    ons.ready(function() {
+
+      //Get Articles Function
+      function getArticles() {
+        //console.log("getArticles() started.");
+
+        var request = new XMLHttpRequest();
+
+        request.open('POST', 'http://drydenwire.com/api/json-news');
+
+        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        request.onreadystatechange = function () {
+          var DONE = this.DONE || 4;
+          //console.log("Request Status: " + request.status);
+          if (this.readyState === DONE){
+            //console.log("Response Text: " + request.responseText);
+            populateArticles(request.responseText);
+          }
+        };
+
+        var data = 'startResults=0';
+        request.send(data);
+
+        //console.log("Data Sent: " + data);
+
+      } //end get articles function
+
+      function populateArticles(json) {
+        json = JSON.parse(json);
+        console.log("populateArticles() started");
+        //this will contain the articles as an array
+        var articlesListHTMLArr = [];
+
+        //this will contain the articles concantenated as HTML
+        var articlesListHTML = "";
+
+        for (i=0;i<10;i++) {
+          //Create simple variables for articles.
+          var articleTitle = json[i].title;
+          var articleImageURL = json[i].fImageUrl;
+          var articleDate = json[i].date;
+          var articleBody = json[i].body;
+          //add the full URL path to body images.
+          //var articleBody = articleBody.replace(/\/site/g, "http://drydenwire.com/site");
+
+          articlesListHTMLArr.push("<ons-list>");
+          articlesListHTMLArr.push("<ons-list-item class=\"list__item--tappable list__item__line-height\" modifier=\"chevron\">");
+          articlesListHTMLArr.push(articleTitle);
+          articlesListHTMLArr.push("</ons-list-item>");
+          articlesListHTMLArr.push("</ons-list>");
+        }
+
+        articlesListHTML = articlesListHTMLArr.join("");
+
+        document.getElementById("article-list").innerHTML = articlesListHTML;
+
+      } //end populate articles function
+
+      //Start app by retrieving articles
+      getArticles();
+    });
+
+    window.fn = {};
+
+    window.fn.open = function() {
+      var menu = document.getElementById('menu');
+      menu.open();
+    };
+
+    window.fn.load = function(page) {
+      var content = document.getElementById('content');
+      var menu = document.getElementById('menu');
+      content.load(page)
+        .then(menu.close.bind(menu));
+    };
+
+  </script>
+</head>
+<body>
+  <ons-splitter>
+    <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
+      <ons-page>
+        <ons-list>
+          <ons-list-item id="nav-home" onclick="fn.load('home.html')" tappable>
+            <ons-icon icon="home"></ons-icon>&nbsp;Home
+          </ons-list-item>
+          <ons-list-item onclick="fn.load('obituaries.html')" tappable>
+            <ons-icon icon="bank"></ons-icon>&nbsp;Obituaries
+          </ons-list-item>
+          <ons-list-item onclick="fn.load('headlines.html')" tappable>
+            <ons-icon icon="list"></ons-icon>&nbsp;Headlines
+          </ons-list-item>
+          <ons-list-item onclick="fn.load('advertise.html')" tappable>
+                <ons-icon icon="usd"></ons-icon>&nbsp;Advertise
+          </ons-list-item>
+        </ons-list>
+      </ons-page>
+    </ons-splitter-side>
+    <ons-splitter-content id="content" page="home.html"></ons-splitter-content>
+  </ons-splitter>
+
+  <ons-template id="home.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button onclick="fn.open()">
+            <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+          Main
+        </div>
+      </ons-toolbar>
+      <div id="article-list">
+      </div>
+    </ons-page>
+  </ons-template>
+
+  <ons-template id="obituaries.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="left">
+        <ons-toolbar-button onclick="fn.open()">
+          <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+        </ons-toolbar-button>
+      </div>
+      <div class="center">
+        Obituaries
+      </div>
+    </ons-toolbar>
+  </ons-page>
+  </ons-template>
+
+  <ons-template id="headlines.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="left">
+        <ons-toolbar-button onclick="fn.open()">
+          <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+        </ons-toolbar-button>
+      </div>
+      <div class="center">
+        Headlines
+      </div>
+    </ons-toolbar>
+  </ons-page>
+  </ons-template>
+
+    <ons-template id="advertise.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="left">
+        <ons-toolbar-button onclick="fn.open()">
+          <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+        </ons-toolbar-button>
+      </div>
+      <div class="center">
+        Advertise
+      </div>
+    </ons-toolbar>
+  </ons-page>
+  </ons-template>
+
+</body>
+</html>
