@@ -15,42 +15,44 @@
   <script>
 
   document.addEventListener('init', function(event) {
-
     var page = event.target;
-    var articlesList = page.querySelector('#article-list');
-    var startResults = 0;
 
-    function getArticles() {
+    if (event.target.matches("#home")) {
 
-      var request = new XMLHttpRequest();
+      var articlesList = page.querySelector('#article-list');
+      var startResults = 0;
+      var articleLiArr = [];
 
-      request.open('POST', 'http://drydenwire.com/api/json-news');
-      request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      request.send("startResults=" + startResults);
-      request.onreadystatechange = function () {//
-        var DONE = this.DONE || 4;
-        if (this.readyState === DONE) {
-          json = JSON.parse(request.responseText);
-          console.log(json);
+      function getArticles() {
 
-          for (i=0;i<10;i++) {
-            var li = document.createElement("ons-list-item");
-            li.innerHTML = json[i].title;
-            articlesList.appendChild(li);
-            var template = document.createElement("ons-template");
-            var page = document.createElement("ons-page");
-            template.id = "article-template-" + startResults;
-            page.id = "article-page-" + startResults;
-            template.appendChild(page);
-            document.body.appendChild(template);
-            startResults += 1;
+        var request = new XMLHttpRequest();
+
+        request.open('POST', 'http://drydenwire.com/api/json-news');
+        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        request.send("startResults=" + startResults);
+        request.onreadystatechange = function () {
+          var DONE = this.DONE;
+
+          if (this.readyState === DONE) {
+            json = JSON.parse(request.responseText);
+            //console.log(json);
+
+            for (i=0;i<10;i++) {
+              var li = document.createElement("ons-list-item");
+              li.setAttribute("class", "list__item--tappable article-li");
+              li.setAttribute("modifier", "chevron");
+              li.setAttribute("data-pageid", json[i].pageid);
+              li.addEventListener("click", function() {
+                openArticle(this.dataset.pageid);
+              })
+              li.innerHTML = json[i].title;
+              articlesList.appendChild(li);
+              startResults += 1;
+            }
           }
-
         }
       }
-    }
 
-    if (page.id === 'home') {
       //initially load articles
       getArticles();
 
@@ -59,15 +61,44 @@
         getArticles();
       };
 
-    }
+      //function to open article
+      function openArticle(id) {
+          var json;
+          document.querySelector('#navigator')
+          .pushPage("article.html", {data: {
+            pageid: id
+          }})
+          .then(function(page) {
+            //console.log("Page Name: ", page.name);
 
-  });
+            var request = new XMLHttpRequest();
+
+            request.open('POST', 'http://drydenwire.com/api/json-news');
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.send("getArticle=" + page.data.pageid);
+            request.onreadystatechange = function () {
+
+              if (this.readyState === this.done) {
+                  var response = JSON.parse(request.responseText);
+                  console.log(response);
+                  //page.querySelector('#article-title').innerHTML = response.title;
+                } //end if done
+              } //end on ready state change
+            }) // End then
+          } // End open article function
+
+    } //End if is home
+
+  }); //End on document init
+
+
 
   </script>
 </head>
 <body>
 
-  <ons-navigator id="navigator" page="home.html"></ons-navigator>
+  <ons-navigator animation="slide" id="navigator" page="home.html">
+  </ons-navigator>
 
   <ons-template id="home.html">
     <ons-page id="home">
@@ -82,16 +113,17 @@
     </ons-page>
   </ons-template>
 
-  <ons-template id="art-1.html">
+  <ons-template id="article.html">
     <ons-page>
       <ons-toolbar>
-        <div class="center">
-          Article 1
-        </div>
         <div class="left">
           <ons-back-button>Back</ons-back-button>
         </div>
+        <div class="center">
+          Single Article
+        </div>
       </ons-toolbar>
+      <h1 id="article-title"></h1>
     </ons-page>
   </ons-template>
 
@@ -102,6 +134,7 @@
         Obituaries
       </div>
     </ons-toolbar>
+    OBITUARIES ARE SO NICE
   </ons-page>
   </ons-template>
 
@@ -118,11 +151,6 @@
     <ons-template id="advertise.html">
   <ons-page>
     <ons-toolbar>
-      <div class="left">
-        <ons-toolbar-button onclick="fn.open()">
-          <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
-        </ons-toolbar-button>
-      </div>
       <div class="center">
         Advertise
       </div>
@@ -130,21 +158,17 @@
   </ons-page>
   </ons-template>
 
-
+<!--
   <ons-tabbar>
-    <ons-tab label="Tab 1" page="home.html" active>
-      <ons-icon icon="home"></ons-icon>&nbsp;
+    <ons-tab label="home" page="home.html" icon="home" active>
     </ons-tab>
-    <ons-tab label="Tab 2" page="obituaries.html">
-      <ons-icon icon="bank"></ons-icon>&nbsp;
+    <ons-tab label="obituaries" page="obituaries.html" icon="bank">
     </ons-tab>
-    <ons-tab label="Tab 1" page="headlines.html">
-      <ons-icon icon="list"></ons-icon>&nbsp;
+    <ons-tab label="headlines" page="headlines.html" icon="list">
     </ons-tab>
-    <ons-tab label="Tab 2" page="advertise.html">
-      <ons-icon icon="usd"></ons-icon>&nbsp;
+    <ons-tab label="advertise" page="advertise.html" icon="usd">
     </ons-tab>
   </ons-tabbar>
-
+-->
 </body>
 </html>
