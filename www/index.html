@@ -34,8 +34,8 @@
           var DONE = this.DONE;
 
           if (this.readyState === DONE) {
-            json = JSON.parse(request.responseText);
-            //console.log(json);
+            var json = JSON.parse(request.responseText);
+            console.log(json);
 
             for (i=0;i<10;i++) {
               var li = document.createElement("ons-list-item");
@@ -46,6 +46,8 @@
                 openArticle(this.dataset.pageid);
               })
               li.innerHTML = json[i].title;
+              //remove spinner
+              document.querySelector("#article-list-spinner").style.display = "none";
               articlesList.appendChild(li);
               startResults += 1;
             }
@@ -75,13 +77,17 @@
 
             request.open('POST', 'http://drydenwire.com/api/json-news');
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.send("getArticle=" + page.data.pageid);
+            request.send("articleId=" + page.data.pageid);
             request.onreadystatechange = function () {
+              var DONE = this.DONE;
 
-              if (this.readyState === this.done) {
-                  var response = JSON.parse(request.responseText);
-                  console.log(response);
-                  //page.querySelector('#article-title').innerHTML = response.title;
+              if (this.readyState === DONE) {
+                  var json = JSON.parse(request.responseText);
+                  console.log("Response Text: " + request.responseText);
+
+                  //remove spinner
+                  document.querySelector("#single-article-spinner").style.display = "none";
+                  page.querySelector('#article-title').innerHTML = json.title;
                 } //end if done
               } //end on ready state change
             }) // End then
@@ -108,6 +114,9 @@
         </div>
       </ons-toolbar>
       <ons-list id="article-list">
+        <span id="article-list-spinner" class="spinner">
+          <ons-icon size="35px" spin="true" icon="ion-load-d"></ons-icon>
+        </span>
       </ons-list>
       <ons-button modifier="large--cta" id="articles-load">Load More</ons-button>
     </ons-page>
@@ -123,7 +132,12 @@
           Single Article
         </div>
       </ons-toolbar>
-      <h1 id="article-title"></h1>
+      <div class="article-wrapper">
+        <span id="single-article-spinner" class="spinner">
+          <ons-icon size="35px" spin="true" icon="ion-load-d"></ons-icon>
+        </span>
+        <h1 id="article-title"></h1>
+      </div>
     </ons-page>
   </ons-template>
 
