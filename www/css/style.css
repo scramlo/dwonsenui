@@ -39,7 +39,12 @@ img {
   padding:0.5rem;
   display:flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 #load-more-wrapper {
   margin: 1rem;
+}
+
+#articles-load {
+  background-color: black;
 }
