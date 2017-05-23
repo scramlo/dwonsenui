@@ -79,11 +79,11 @@
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             request.send("articleId=" + page.data.pageid);
             request.onreadystatechange = function () {
-              var DONE = this.DONE;
+              var DONE = this.DONE;//
 
               if (this.readyState === DONE) {
                   var json = JSON.parse(request.responseText);
-                  console.log("Response Text: " + request.responseText);
+                  //console.log("Response Text: " + request.responseText);
 
                   //remove spinner
                   document.querySelector("#single-article-spinner").style.display = "none";
