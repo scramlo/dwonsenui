@@ -37,7 +37,13 @@
             var json = JSON.parse(request.responseText);
             console.log(json);
 
-            for (i=0;i<10;i++) {
+            if (startResults === 0) {
+              var image = document.createElement("img");
+              image.setAttribute("src", json[0].latestImgUrl);//
+              page.querySelector("#article-list").appendChild(image);
+            }
+
+            for (i=1;i<11;i++) {
 
               //create card
               var card = document.createElement("div");
