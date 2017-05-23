@@ -10,3 +10,40 @@ img {
 #article-body-wrapper {
   padding: 0 1rem;
 }
+
+.article-card {
+  margin: 1rem;
+  background-color:white;
+  border-radius: 1px;
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+}
+
+.article-card>.flexbox {
+  display:flex;
+  align-items: center;
+}
+
+.article-card>.flexbox>img {
+  width: 125px;
+  height: 125px;
+}
+
+.article-card>.flexbox>p {
+  padding:0.4rem;
+}
+
+.article-card>.article-card-footer {
+  background-color: #eee;
+  border-top:1px solid rgba(0,0,0,0.2);
+  padding:0.5rem;
+  display:flex;
+  justify-content: space-between;
+}
+
+.article-card>.article-card-footer small:last-of-type {
+
+}
+
+#load-more-wrapper {
+  margin: 1rem;
+}

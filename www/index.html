@@ -38,17 +38,32 @@
             console.log(json);
 
             for (i=0;i<10;i++) {
-              var li = document.createElement("ons-list-item");
-              li.setAttribute("class", "list__item--tappable article-li");
-              li.setAttribute("modifier", "chevron");
-              li.setAttribute("data-pageid", json[i].pageid);
-              li.addEventListener("click", function() {
-                openArticle(this.dataset.pageid);
-              })
-              li.innerHTML = json[i].title;
+
+              //create card
+              var card = document.createElement("div");
+              card.setAttribute("class", "article-card");
+              //create flexbox
+              var flexbox = document.createElement("div");
+              flexbox.setAttribute("class", "flexbox");
+              //create thumbnail
+              var img = document.createElement("img");
+              img.setAttribute("src", json[i].thumbUrl);
+              //create title
+              var title = document.createElement("p");//
+              title.innerHTML = json[i].title;
+              //create card footer
+              var footer = document.createElement("div");
+              footer.setAttribute("class", "article-card-footer");
+              footer.innerHTML = "<small><ons-icon icon=\"user\"></ons-icon> By " + json[i].author + "</small><small><ons-icon icon=\"calendar\"></ons-icon> " + json[i].date + "</small>";
               //remove spinner
               document.querySelector("#article-list-spinner").style.display = "none";
-              articlesList.appendChild(li);
+              //append content
+              card.appendChild(flexbox);
+              flexbox.appendChild(img);
+              flexbox.appendChild(title);
+              card.appendChild(footer);
+              page.querySelector("#article-list").appendChild(card);
+
               startResults += 1;
             }
           }
@@ -140,16 +155,19 @@
           Home
         </div>
       </ons-toolbar>
-      <ons-list id="article-list">
+
+      <div id="article-list">
         <span id="article-list-spinner" class="spinner">
           <ons-icon size="35px" spin="true" icon="ion-load-d"></ons-icon>
         </span>
-      </ons-list>
-      <ons-button modifier="large--cta" id="articles-load">Load More</ons-button>
+      </div>
+      <p id="load-more-wrapper">
+        <ons-button modifier="large--cta" id="articles-load">Load More</ons-button>
+      </p>
     </ons-page>
   </ons-template>
 
-  <ons-template id="article.html">
+  <ons-template id="article.html" >
     <ons-page>
       <ons-toolbar>
         <div class="left">
