@@ -87,7 +87,34 @@
 
                   //remove spinner
                   document.querySelector("#single-article-spinner").style.display = "none";
-                  page.querySelector('#article-title').innerHTML = json.title;
+
+                  //date for title
+                  page.querySelector('#article-heading').innerHTML = json.date;
+
+                  //find the wrapper
+                  var wrapper = page.querySelector('#article-wrapper');
+
+                  //create featured image
+                  var img = document.createElement("img");
+                  img.setAttribute("src", json.imgUrl);
+
+                  //create title
+                  var list = document.createElement("ons-list");
+                  var listItem = document.createElement("ons-list-item");
+                  var title = document.createElement("h3");
+                  title.innerHTML = json.title;
+                  list.appendChild(listItem);
+                  listItem.appendChild(title);
+
+                  //create body
+                  var bodyWrapper = document.createElement("div");
+                  bodyWrapper.setAttribute("id", "article-body-wrapper");
+                  bodyWrapper.innerHTML = json.body;
+
+                  wrapper.appendChild(img);
+                  wrapper.appendChild(list);
+                  wrapper.appendChild(bodyWrapper);
+
                 } //end if done
               } //end on ready state change
             }) // End then
@@ -128,15 +155,12 @@
         <div class="left">
           <ons-back-button>Back</ons-back-button>
         </div>
-        <div class="center">
-          Single Article
-        </div>
+        <div id="article-heading" class="center"></div>
       </ons-toolbar>
-      <div class="article-wrapper">
+      <div id="article-wrapper">
         <span id="single-article-spinner" class="spinner">
           <ons-icon size="35px" spin="true" icon="ion-load-d"></ons-icon>
         </span>
-        <h1 id="article-title"></h1>
       </div>
     </ons-page>
   </ons-template>
