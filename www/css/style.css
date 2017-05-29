@@ -18,7 +18,7 @@ img {
   box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
 
-.article-card:focus, .article-card:hover, .article-card:active {
+.article-card:active {
   background-color:#ccc;
 }
 

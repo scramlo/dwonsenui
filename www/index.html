@@ -35,7 +35,7 @@
 
           if (this.readyState === DONE) {
             var json = JSON.parse(request.responseText);
-            console.log(json);
+            //console.log(json);
 
             //If this is the featured article (It is pushed to 0 index of array)
             if (startResults === 0) {
@@ -60,6 +60,7 @@
               //create card
               var card = document.createElement("div");
               card.setAttribute("class", "article-card");
+              card.setAttribute("data-pageid", json[i].pageid)
               //create flexbox
               var flexbox = document.createElement("div");
               flexbox.setAttribute("class", "flexbox");
@@ -84,11 +85,12 @@
 
               //update the next starting point for pulling articles
               startResults += 1;
-
-              
             }
+
+            addEventHandlersToArticles();
           }
         }
+
       }
 
       //initially load articles
@@ -98,6 +100,17 @@
       page.querySelector('#articles-load').onclick = function() {
         getArticles();
       };
+
+      function addEventHandlersToArticles() {
+        var articles = document.getElementsByClassName("article-card");
+
+        for (var i=0;i<articles.length;i++) {
+          articles[i].addEventListener("click", function() {
+            openArticle(this.dataset.pageid);
+          })
+        }
+
+      }
 
       //function to open article
       function openArticle(id) {
@@ -129,6 +142,10 @@
 
                   //find the wrapper
                   var wrapper = page.querySelector('#article-wrapper');
+
+                  //create image
+                  var img = document.createElement("img");
+                  img.setAttribute("src", json.imgUrl);
 
                   //create title
                   var list = document.createElement("ons-list");
