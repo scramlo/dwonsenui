@@ -37,14 +37,26 @@
             var json = JSON.parse(request.responseText);
             console.log(json);
 
+            //If this is the featured article (It is pushed to 0 index of array)
             if (startResults === 0) {
-              var image = document.createElement("img");
-              image.setAttribute("src", json[0].latestImgUrl);//
-              page.querySelector("#article-list").appendChild(image);
+              //create featured wrapper
+              var featuredWrapper = document.createElement("div");
+              featuredWrapper.setAttribute("id", "featured-wrapper");
+              //create featured heading
+              var featuredHeading = document.createElement("h3");
+              featuredHeading.setAttribute("id", "featured-heading");
+              featuredHeading.innerHTML = json[0].title;
+              //create featured image
+              var featuredImage = document.createElement("img");
+              featuredImage.setAttribute("src", json[0].latestImgUrl);
+              featuredImage.setAttribute("id", "featured-image");
+              //add featured to page
+              featuredWrapper.appendChild(featuredImage);
+              featuredWrapper.appendChild(featuredHeading);
+              page.querySelector("#article-list").appendChild(featuredWrapper);
             }
 
             for (i=1;i<11;i++) {
-
               //create card
               var card = document.createElement("div");
               card.setAttribute("class", "article-card");
@@ -70,7 +82,10 @@
               card.appendChild(footer);
               page.querySelector("#article-list").appendChild(card);
 
+              //update the next starting point for pulling articles
               startResults += 1;
+
+              
             }
           }
         }
@@ -114,10 +129,6 @@
 
                   //find the wrapper
                   var wrapper = page.querySelector('#article-wrapper');
-
-                  //create featured image
-                  var img = document.createElement("img");
-                  img.setAttribute("src", json.imgUrl);
 
                   //create title
                   var list = document.createElement("ons-list");

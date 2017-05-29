@@ -18,6 +18,10 @@ img {
   box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
 
+.article-card:focus, .article-card:hover, .article-card:active {
+  background-color:#ccc;
+}
+
 .article-card>.flexbox {
   display:flex;
   align-items: center;
@@ -33,18 +37,31 @@ img {
 }
 
 .article-card>.article-card-footer {
-  background-color: #C41900;
-  color: white;
+  background-color: #eee;
+  color: black;
   border-top:1px solid rgba(0,0,0,0.2);
   padding:0.5rem;
   display:flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  flex-flow: column;
 }
+
 #load-more-wrapper {
   margin: 1rem;
 }
 
 #articles-load {
   background-color: black;
+}
+
+#featured-wrapper {
+  position:relative;
+}
+
+#featured-heading {
+  position: absolute;
+  background-color: rgba(0,0,0,0.5);
+  padding: 1rem;
+  color:white;
+  bottom:0;
+  left:0;
 }
