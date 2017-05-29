@@ -35,13 +35,14 @@
 
           if (this.readyState === DONE) {
             var json = JSON.parse(request.responseText);
-            //console.log(json);
+            console.log(json);
 
             //If this is the featured article (It is pushed to 0 index of array)
             if (startResults === 0) {
               //create featured wrapper
               var featuredWrapper = document.createElement("div");
               featuredWrapper.setAttribute("id", "featured-wrapper");
+              featuredWrapper.setAttribute("data-pageid", json[0].pageid);
               //create featured heading
               var featuredHeading = document.createElement("h3");
               featuredHeading.setAttribute("id", "featured-heading");
@@ -103,6 +104,11 @@
 
       function addEventHandlersToArticles() {
         var articles = document.getElementsByClassName("article-card");
+        var featuredArticle = document.getElementById("featured-wrapper");
+
+        featuredArticle.addEventListener("click", function() {
+          openArticle(this.dataset.pageid);
+        })
 
         for (var i=0;i<articles.length;i++) {
           articles[i].addEventListener("click", function() {
@@ -148,12 +154,11 @@
                   img.setAttribute("src", json.imgUrl);
 
                   //create title
-                  var list = document.createElement("ons-list");
-                  var listItem = document.createElement("ons-list-item");
+                  var titleWrapper = document.createElement("div");
+                  titleWrapper.setAttribute("class", "article-title-wrapper");
                   var title = document.createElement("h3");
                   title.innerHTML = json.title;
-                  list.appendChild(listItem);
-                  listItem.appendChild(title);
+                  titleWrapper.appendChild(title);
 
                   //create body
                   var bodyWrapper = document.createElement("div");
@@ -161,7 +166,7 @@
                   bodyWrapper.innerHTML = json.body;
 
                   wrapper.appendChild(img);
-                  wrapper.appendChild(list);
+                  wrapper.appendChild(titleWrapper);
                   wrapper.appendChild(bodyWrapper);
 
                 } //end if done
