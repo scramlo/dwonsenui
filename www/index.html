@@ -23,11 +23,22 @@
     }
   };
 
-  var textOnlyMode;
+  var textOnlyMode = false;
+
+  function textOnlyModeChoice(arg) {
+    document.getElementById("alert-text-only-dialog").hide();
+    if (arg === 'true') {
+      textOnlyMode = true;
+      startHome();
+    } else {
+      textOnlyMode = false;
+      startHome();
+    }
+  }
 
   /* Load the home page function */
   function startHome() {
-    alert("Text Only Mode is: " + textOnlyMode);
+    console.log("startHome() started." + " textOnlyMode = " + textOnlyMode);
     var articlesList = document.querySelector('#article-list');
     var startResults = 0;
     var articleLiArr = [];
@@ -49,7 +60,7 @@
           //If this is the featured article (It is pushed to 0 index of array)
           if (startResults === 0) {
 
-            if (textOnlyMode === true) {//
+            if (textOnlyMode === true) {
               //create featured wrapper
               var featuredWrapper = document.createElement("div");
               featuredWrapper.setAttribute("id", "featured-wrapper-textonlymode");
@@ -90,9 +101,12 @@
             //create flexbox
             var flexbox = document.createElement("div");
             flexbox.setAttribute("class", "flexbox");
-            //create thumbnail
-            var img = document.createElement("img");
-            img.setAttribute("src", json[i].thumbUrl);
+
+            if (textOnlyMode === false) {
+              //create thumbnail
+              var img = document.createElement("img");
+              img.setAttribute("src", json[i].thumbUrl);
+            }
             //create title
             var title = document.createElement("p");//
             title.innerHTML = json[i].title;
@@ -104,7 +118,9 @@
             document.querySelector("#article-list-spinner").style.display = "none";
             //append content
             card.appendChild(flexbox);
-            flexbox.appendChild(img);
+            if (textOnlyMode === false) {
+              flexbox.appendChild(img);  
+            }
             flexbox.appendChild(title);
             card.appendChild(footer);
             document.querySelector("#article-list").appendChild(card);
@@ -148,7 +164,7 @@
     }
 
     //function to open article
-    function openArticle(id) {
+    function openArticle(id, textOnly) {
         var json;
         document.querySelector('#navigator')
         .pushPage("article.html", {data: {
@@ -178,9 +194,13 @@
                 //find the wrapper
                 var wrapper = document.querySelector('#article-wrapper');
 
-                //create image
-                var img = document.createElement("img");
-                img.setAttribute("src", json.imgUrl);
+                console.log("Text only mode: " + textOnlyMode);
+
+                if (textOnlyMode === false) {
+                  //create image
+                  var img = document.createElement("img");
+                  img.setAttribute("src", json.imgUrl);
+                }
 
                 //create title
                 var titleWrapper = document.createElement("div");
@@ -194,7 +214,9 @@
                 bodyWrapper.setAttribute("id", "article-body-wrapper");
                 bodyWrapper.innerHTML = json.body;
 
-                wrapper.appendChild(img);
+                if (textOnlyMode === false) {
+                  wrapper.appendChild(img);
+                }
                 wrapper.appendChild(titleWrapper);
                 wrapper.appendChild(bodyWrapper);
 
@@ -204,17 +226,6 @@
         } // End open article function
   }
   /* End Load Home Page Function */
-
-  function textOnlyModeChoice(arg) {
-    document.getElementById("alert-text-only-dialog").hide();
-    if (arg === 'true') {
-      textOnlyMode = true;
-      startHome();
-    } else {
-      textOnlyMode = false;
-      startHome();
-    }
-  }
 
   document.addEventListener('init', function(event) {
     var page = event.target;
@@ -265,7 +276,7 @@
               var bitsLoaded = downloadSize * 8;
               var speedBps = (bitsLoaded / duration).toFixed(2);
               var speedKbps = (speedBps / 1024).toFixed(2);
-              if (speedKbps < 400) {
+              if (speedKbps < 500) {
                 document.getElementById("alert-text-only-dialog").show();
               } else {
                 startHome();
@@ -317,8 +328,8 @@
       Your connection is less than 500kbps. Would you like to enable text-only mode?
     </div>
     <div class="alert-dialog-footer">
-      <button class="alert-dialog-button" onclick="textOnlyModeChoice('false')">No</button>
       <button class="alert-dialog-button" onclick="textOnlyModeChoice('true')">Yes</button>
+      <button class="alert-dialog-button" onclick="textOnlyModeChoice('false')">No</button>
     </div>
   </ons-alert-dialog>
 
