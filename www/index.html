@@ -14,31 +14,54 @@
 
   <script>
 
-  document.addEventListener('init', function(event) {
-    var page = event.target;
+  document.onclick = function (e) {
+    e = e ||  window.event;
+    var element = e.target || e.srcElement;
+    if (element.tagName == 'A') {
+      window.open(element.href, "_blank", "location=yes");
+      return false;
+    }
+  };
 
-    if (event.target.matches("#home")) {
+  var textOnlyMode;
 
-      var articlesList = page.querySelector('#article-list');
-      var startResults = 0;
-      var articleLiArr = [];
+  /* Load the home page function */
+  function startHome() {
+    alert("Text Only Mode is: " + textOnlyMode);
+    var articlesList = document.querySelector('#article-list');
+    var startResults = 0;
+    var articleLiArr = [];
 
-      function getArticles() {
+    function getArticles() {
 
-        var request = new XMLHttpRequest();
+      var request = new XMLHttpRequest();
 
-        request.open('POST', 'http://drydenwire.com/api/json-news');
-        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        request.send("startResults=" + startResults);
-        request.onreadystatechange = function () {
-          var DONE = this.DONE;
+      request.open('POST', 'http://drydenwire.com/api/json-news');
+      request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      request.send("startResults=" + startResults);
+      request.onreadystatechange = function () {
+        var DONE = this.DONE;
 
-          if (this.readyState === DONE) {
-            var json = JSON.parse(request.responseText);
-            console.log(json);
+        if (this.readyState === DONE) {
+          var json = JSON.parse(request.responseText);
+          console.log(json);
 
-            //If this is the featured article (It is pushed to 0 index of array)
-            if (startResults === 0) {
+          //If this is the featured article (It is pushed to 0 index of array)
+          if (startResults === 0) {
+
+            if (textOnlyMode === true) {//
+              //create featured wrapper
+              var featuredWrapper = document.createElement("div");
+              featuredWrapper.setAttribute("id", "featured-wrapper-textonlymode");
+              featuredWrapper.setAttribute("data-pageid", json[0].pageid);
+              //create featured heading
+              var featuredHeading = document.createElement("h3");
+              featuredHeading.setAttribute("id", "featured-heading-textonlymode");
+              featuredHeading.innerHTML = json[0].title;
+              //append everything to page
+              featuredWrapper.appendChild(featuredHeading);
+              document.querySelector("#article-list").appendChild(featuredWrapper);
+            } else {
               //create featured wrapper
               var featuredWrapper = document.createElement("div");
               featuredWrapper.setAttribute("id", "featured-wrapper");
@@ -46,133 +69,234 @@
               //create featured heading
               var featuredHeading = document.createElement("h3");
               featuredHeading.setAttribute("id", "featured-heading");
+              featuredHeading.setAttribute("class", "featured-heading-textonlymode");
               featuredHeading.innerHTML = json[0].title;
               //create featured image
               var featuredImage = document.createElement("img");
               featuredImage.setAttribute("src", json[0].latestImgUrl);
               featuredImage.setAttribute("id", "featured-image");
-              //add featured to page
+              //append everything to page
               featuredWrapper.appendChild(featuredImage);
               featuredWrapper.appendChild(featuredHeading);
-              page.querySelector("#article-list").appendChild(featuredWrapper);
+              document.querySelector("#article-list").appendChild(featuredWrapper);
             }
-
-            for (i=1;i<11;i++) {
-              //create card
-              var card = document.createElement("div");
-              card.setAttribute("class", "article-card");
-              card.setAttribute("data-pageid", json[i].pageid)
-              //create flexbox
-              var flexbox = document.createElement("div");
-              flexbox.setAttribute("class", "flexbox");
-              //create thumbnail
-              var img = document.createElement("img");
-              img.setAttribute("src", json[i].thumbUrl);
-              //create title
-              var title = document.createElement("p");//
-              title.innerHTML = json[i].title;
-              //create card footer
-              var footer = document.createElement("div");
-              footer.setAttribute("class", "article-card-footer");
-              footer.innerHTML = "<small><ons-icon icon=\"user\"></ons-icon> By " + json[i].author + "</small><small><ons-icon icon=\"calendar\"></ons-icon> " + json[i].date + "</small>";
-              //remove spinner
-              document.querySelector("#article-list-spinner").style.display = "none";
-              //append content
-              card.appendChild(flexbox);
-              flexbox.appendChild(img);
-              flexbox.appendChild(title);
-              card.appendChild(footer);
-              page.querySelector("#article-list").appendChild(card);
-
-              //update the next starting point for pulling articles
-              startResults += 1;
-            }
-
-            addEventHandlersToArticles();
           }
-        }
 
+          for (i=1;i<11;i++) {
+            //create card
+            var card = document.createElement("div");
+            card.setAttribute("class", "article-card");
+            card.setAttribute("data-pageid", json[i].pageid)
+            //create flexbox
+            var flexbox = document.createElement("div");
+            flexbox.setAttribute("class", "flexbox");
+            //create thumbnail
+            var img = document.createElement("img");
+            img.setAttribute("src", json[i].thumbUrl);
+            //create title
+            var title = document.createElement("p");//
+            title.innerHTML = json[i].title;
+            //create card footer
+            var footer = document.createElement("div");
+            footer.setAttribute("class", "article-card-footer");
+            footer.innerHTML = "<small><ons-icon icon=\"user\"></ons-icon> By " + json[i].author + "</small><small><ons-icon icon=\"calendar\"></ons-icon> " + json[i].date + "</small>";
+            //remove spinner
+            document.querySelector("#article-list-spinner").style.display = "none";
+            //append content
+            card.appendChild(flexbox);
+            flexbox.appendChild(img);
+            flexbox.appendChild(title);
+            card.appendChild(footer);
+            document.querySelector("#article-list").appendChild(card);
+
+            //update the next starting point for pulling articles
+            startResults += 1;
+          }
+
+          addEventHandlersToArticles();
+        }
       }
 
-      //initially load articles
+    }
+
+    //initially load articles
+    getArticles();
+
+    //event handler to load more articles with button
+    document.querySelector('#articles-load').onclick = function() {
       getArticles();
+    };
 
-      //event handler to load more articles with button
-      page.querySelector('#articles-load').onclick = function() {
-        getArticles();
-      };
-
-      function addEventHandlersToArticles() {
-        var articles = document.getElementsByClassName("article-card");
+    function addEventHandlersToArticles() {
+      var articles = document.getElementsByClassName("article-card");
+      if (textOnlyMode === true) {
+        var featuredArticle = document.getElementById("featured-wrapper-textonlymode");
+      } else {
         var featuredArticle = document.getElementById("featured-wrapper");
+      }
 
-        featuredArticle.addEventListener("click", function() {
+      featuredArticle.addEventListener("click", function() {
+        openArticle(this.dataset.pageid);
+      })
+
+      for (var i=0;i<articles.length;i++) {
+        articles[i].addEventListener("click", function() {
           openArticle(this.dataset.pageid);
         })
-
-        for (var i=0;i<articles.length;i++) {
-          articles[i].addEventListener("click", function() {
-            openArticle(this.dataset.pageid);
-          })
-        }
-
       }
 
-      //function to open article
-      function openArticle(id) {
-          var json;
-          document.querySelector('#navigator')
-          .pushPage("article.html", {data: {
-            pageid: id
-          }})
-          .then(function(page) {
-            //console.log("Page Name: ", page.name);
+    }
 
-            var request = new XMLHttpRequest();
+    //function to open article
+    function openArticle(id) {
+        var json;
+        document.querySelector('#navigator')
+        .pushPage("article.html", {data: {
+          pageid: id
+        }})
+        .then(function(page) {
+          //console.log("Page Name: ", page.name);//
 
-            request.open('POST', 'http://drydenwire.com/api/json-news');
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.send("articleId=" + page.data.pageid);
-            request.onreadystatechange = function () {
-              var DONE = this.DONE;//
+          var request = new XMLHttpRequest();
 
-              if (this.readyState === DONE) {
-                  var json = JSON.parse(request.responseText);
-                  //console.log("Response Text: " + request.responseText);
+          request.open('POST', 'http://drydenwire.com/api/json-news');
+          request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          request.send("articleId=" + page.data.pageid);
+          request.onreadystatechange = function () {
+            var DONE = this.DONE;//
 
-                  //remove spinner
-                  document.querySelector("#single-article-spinner").style.display = "none";
+            if (this.readyState === DONE) {
+                var json = JSON.parse(request.responseText);
+                //console.log("Response Text: " + request.responseText);
 
-                  //date for title
-                  page.querySelector('#article-heading').innerHTML = json.date;
+                //remove spinner
+                document.querySelector("#single-article-spinner").style.display = "none";
 
-                  //find the wrapper
-                  var wrapper = page.querySelector('#article-wrapper');
+                //date for title
+                document.querySelector('#article-heading').innerHTML = json.date;
 
-                  //create image
-                  var img = document.createElement("img");
-                  img.setAttribute("src", json.imgUrl);
+                //find the wrapper
+                var wrapper = document.querySelector('#article-wrapper');
 
-                  //create title
-                  var titleWrapper = document.createElement("div");
-                  titleWrapper.setAttribute("class", "article-title-wrapper");
-                  var title = document.createElement("h3");
-                  title.innerHTML = json.title;
-                  titleWrapper.appendChild(title);
+                //create image
+                var img = document.createElement("img");
+                img.setAttribute("src", json.imgUrl);
 
-                  //create body
-                  var bodyWrapper = document.createElement("div");
-                  bodyWrapper.setAttribute("id", "article-body-wrapper");
-                  bodyWrapper.innerHTML = json.body;
+                //create title
+                var titleWrapper = document.createElement("div");
+                titleWrapper.setAttribute("class", "article-title-wrapper");
+                var title = document.createElement("h3");
+                title.innerHTML = json.title;
+                titleWrapper.appendChild(title);
 
-                  wrapper.appendChild(img);
-                  wrapper.appendChild(titleWrapper);
-                  wrapper.appendChild(bodyWrapper);
+                //create body
+                var bodyWrapper = document.createElement("div");
+                bodyWrapper.setAttribute("id", "article-body-wrapper");
+                bodyWrapper.innerHTML = json.body;
 
-                } //end if done
-              } //end on ready state change
-            }) // End then
-          } // End open article function
+                wrapper.appendChild(img);
+                wrapper.appendChild(titleWrapper);
+                wrapper.appendChild(bodyWrapper);
+
+              } //end if done
+            } //end on ready state change
+          }) // End then
+        } // End open article function
+  }
+  /* End Load Home Page Function */
+
+  function textOnlyModeChoice(arg) {
+    document.getElementById("alert-text-only-dialog").hide();
+    if (arg === 'true') {
+      textOnlyMode = true;
+      startHome();
+    } else {
+      textOnlyMode = false;
+      startHome();
+    }
+  }
+
+  document.addEventListener('init', function(event) {
+    var page = event.target;
+
+    if (event.target.matches("#home")) {
+
+      /* Test Connection */
+      //JUST AN EXAMPLE, PLEASE USE YOUR OWN PICTURE!
+      var imageAddr = "http://drydenwire.com/site/assets/files/2665/speedtestimage.jpg";
+      var downloadSize = 27000; //bytes
+
+      function ShowProgressMessage(msg) {
+          if (console) {
+              if (typeof msg == "string") {
+                  console.log(msg);
+              } else {
+                  for (var i = 0; i < msg.length; i++) {
+                      console.log(msg[i]);
+                  }
+              }
+          }
+
+          var oProgress = document.getElementById("progress");
+          if (oProgress) {
+              var actualHTML = (typeof msg == "string") ? msg : msg.join("<br />");
+              oProgress.innerHTML = actualHTML;
+          }
+      }
+
+      function InitiateSpeedDetection() {
+          ShowProgressMessage("Loading the image, please wait...");
+          window.setTimeout(MeasureConnectionSpeed, 1);
+      };
+
+      if (window.addEventListener) {
+          window.addEventListener('load', InitiateSpeedDetection, false);
+      } else if (window.attachEvent) {
+          window.attachEvent('onload', InitiateSpeedDetection);
+      }
+
+      function MeasureConnectionSpeed() {
+          var startTime, endTime;
+          var download = new Image();
+          download.onload = function () {
+              endTime = (new Date()).getTime();
+              showResults();
+              var duration = (endTime - startTime) / 1000;
+              var bitsLoaded = downloadSize * 8;
+              var speedBps = (bitsLoaded / duration).toFixed(2);
+              var speedKbps = (speedBps / 1024).toFixed(2);
+              if (speedKbps < 400) {
+                document.getElementById("alert-text-only-dialog").show();
+              } else {
+                startHome();
+              }
+          }
+
+          download.onerror = function (err, msg) {
+              ShowProgressMessage("Invalid image, or error downloading");
+          }
+
+          startTime = (new Date()).getTime();
+          var cacheBuster = "?nnn=" + startTime;
+          download.src = imageAddr + cacheBuster;
+
+          function showResults() {
+              var duration = (endTime - startTime) / 1000;
+              var bitsLoaded = downloadSize * 8;
+              var speedBps = (bitsLoaded / duration).toFixed(2);
+              var speedKbps = (speedBps / 1024).toFixed(2);
+              var speedMbps = (speedKbps / 1024).toFixed(2);
+              ShowProgressMessage([
+                  "Your connection speed is:",
+                  speedBps + " bps",
+                  speedKbps + " kbps",
+                  speedMbps + " Mbps"
+              ]);
+          }
+      }
+
+      MeasureConnectionSpeed();
+
 
     } //End if is home
 
@@ -186,6 +310,17 @@
 
   <ons-navigator animation="slide" id="navigator" page="home.html">
   </ons-navigator>
+
+  <ons-alert-dialog id="alert-text-only-dialog">
+    <div class="alert-dialog-title">Warning!</div>
+    <div class="alert-dialog-content">
+      Your connection is less than 500kbps. Would you like to enable text-only mode?
+    </div>
+    <div class="alert-dialog-footer">
+      <button class="alert-dialog-button" onclick="textOnlyModeChoice('false')">No</button>
+      <button class="alert-dialog-button" onclick="textOnlyModeChoice('true')">Yes</button>
+    </div>
+  </ons-alert-dialog>
 
   <ons-template id="home.html">
     <ons-page id="home">

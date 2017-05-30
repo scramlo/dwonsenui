@@ -66,8 +66,45 @@ img {
   left:0;
 }
 
+#featured-heading-textonlymode {
+  position: relative;
+  color: white;
+  padding: 1rem;
+  border-top: 5px solid black;
+  border-bottom: 5px solid black;
+}
+#featured-wrapper-textonlymode {
+  position:relative;
+  background-color: #C41900;
+}
+
 .article-title-wrapper {
   padding: 0.5rem 1rem;
   background-color: white;
   border-bottom: 5px solid #C41900;
+}
+
+#article-wrapper>img {
+  margin-top:-1rem; /* I don't know why there is a space here!!!*/
+}
+
+#article-list-spinner, #single-article-spinner {
+  height:100vh;
+  width: 100vw;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#alert-text-only {
+  margin: 1rem;
+  padding: 1rem;
+  background-color: #C41900;
+  color:white;
+  font-size: 1rem;
+  border: 2px solid black;
+}
+
+#alert-text-only>span {
+  float:right;
 }
