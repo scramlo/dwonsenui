@@ -11,7 +11,7 @@ img {
   padding: 0 1rem;
 }
 
-.article-card {
+.article-card, .ad-card {
   margin: 1rem;
   background-color:white;
   border-radius: 1px;
@@ -22,7 +22,7 @@ img {
   background-color:#ccc;
 }
 
-.article-card>.flexbox {
+.article-card>.flexbox, .ad-card>.flexbox {
   display:flex;
   align-items: center;
 }
@@ -36,7 +36,7 @@ img {
   padding:0.4rem;
 }
 
-.article-card>.article-card-footer {
+.article-card>.article-card-footer, .ad-card>.ad-card-footer {
   background-color: #eee;
   color: black;
   border-top:1px solid rgba(0,0,0,0.2);

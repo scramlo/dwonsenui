@@ -17,11 +17,16 @@
   document.onclick = function (e) {
     e = e ||  window.event;
     var element = e.target || e.srcElement;
-    if (element.tagName == 'A') {
+    if (element.tagName == 'a') {
       window.open(element.href, "_blank", "location=yes");
       return false;
     }
   };
+
+  function openLink(link) {
+    window.open(link, "_blank", "location=yes");
+    return false;
+  }
 
   var textOnlyMode = false;
 
@@ -54,7 +59,7 @@
         var DONE = this.DONE;
 
         if (this.readyState === DONE) {
-          var json = JSON.parse(request.responseText);
+          var json = JSON.parse(request.responseText);//
           console.log(json);
 
           //If this is the featured article (It is pushed to 0 index of array)
@@ -94,36 +99,66 @@
           }
 
           for (i=1;i<11;i++) {
-            //create card
-            var card = document.createElement("div");
-            card.setAttribute("class", "article-card");
-            card.setAttribute("data-pageid", json[i].pageid)
-            //create flexbox
-            var flexbox = document.createElement("div");
-            flexbox.setAttribute("class", "flexbox");
+            if (json[i].ad === true) {
+              //create card
+              var card = document.createElement("div");
+              card.setAttribute("class", "ad-card");
+              //create flexbox
+              var flexbox = document.createElement("div");
+              flexbox.setAttribute("class", "flexbox");
 
-            if (textOnlyMode === false) {
-              //create thumbnail
-              var img = document.createElement("img");
-              img.setAttribute("src", json[i].thumbUrl);
+              if (textOnlyMode === false) {
+                //create thumbnail
+                var img = document.createElement("img");
+                img.setAttribute("src", json[i].adSrc);
+                img.setAttribute("onclick", "openLink(\"" + json[i].adLink + "\")");
+              }
+              //create card footer
+              var footer = document.createElement("div");
+              footer.setAttribute("class", "ad-card-footer");
+              footer.innerHTML = "<small><ons-icon icon=\"external-link\"></ons-icon> " + json[i].adLink + "</small>";
+              //remove spinner
+              document.querySelector("#article-list-spinner").style.display = "none";
+              //append content
+              card.appendChild(flexbox);
+              if (textOnlyMode === false) {
+                flexbox.appendChild(img);
+              }
+              card.appendChild(footer);
+              document.querySelector("#article-list").appendChild(card);//
+
+            } else {
+              //create card//
+              var card = document.createElement("div");
+              card.setAttribute("class", "article-card");
+              card.setAttribute("data-pageid", json[i].pageid)
+              //create flexbox
+              var flexbox = document.createElement("div");
+              flexbox.setAttribute("class", "flexbox");
+
+              if (textOnlyMode === false) {
+                //create thumbnail
+                var img = document.createElement("img");
+                img.setAttribute("src", json[i].thumbUrl);
+              }
+              //create title
+              var title = document.createElement("p");//
+              title.innerHTML = json[i].title;
+              //create card footer
+              var footer = document.createElement("div");
+              footer.setAttribute("class", "article-card-footer");
+              footer.innerHTML = "<small><ons-icon icon=\"user\"></ons-icon> By " + json[i].author + "</small><small><ons-icon icon=\"calendar\"></ons-icon> " + json[i].date + "</small>";
+              //remove spinner
+              document.querySelector("#article-list-spinner").style.display = "none";
+              //append content
+              card.appendChild(flexbox);
+              if (textOnlyMode === false) {
+                flexbox.appendChild(img);
+              }
+              flexbox.appendChild(title);
+              card.appendChild(footer);
+              document.querySelector("#article-list").appendChild(card);
             }
-            //create title
-            var title = document.createElement("p");//
-            title.innerHTML = json[i].title;
-            //create card footer
-            var footer = document.createElement("div");
-            footer.setAttribute("class", "article-card-footer");
-            footer.innerHTML = "<small><ons-icon icon=\"user\"></ons-icon> By " + json[i].author + "</small><small><ons-icon icon=\"calendar\"></ons-icon> " + json[i].date + "</small>";
-            //remove spinner
-            document.querySelector("#article-list-spinner").style.display = "none";
-            //append content
-            card.appendChild(flexbox);
-            if (textOnlyMode === false) {
-              flexbox.appendChild(img);  
-            }
-            flexbox.appendChild(title);
-            card.appendChild(footer);
-            document.querySelector("#article-list").appendChild(card);
 
             //update the next starting point for pulling articles
             startResults += 1;
