@@ -112,11 +112,22 @@
                 var img = document.createElement("img");
                 img.setAttribute("src", json[i].adSrc);//
                 img.setAttribute("onclick", "openLink(\"" + json[i].adLink + "\")");
+              } else { // if text only mode is on...
+                var adTitle = document.createElement("p");
+                if (json[i].adLink.length > 25) {
+                  var adArr = json[i].adLink.split("");
+                  var adTrimArr = adArr.slice(0,25);
+                  adTitle.innerHTML = adTrimArr.join("") + "...";
+                } else {
+                  adTitle.innerHTML = json[i].adLink + "...";
+                }
+                flexbox.appendChild(adTitle);
+                flexbox.setAttribute("onclick", "openLink(\"" + json[i].adLink + "\")");
               }
-              //create card footer
-              var footer = document.createElement("div");
-              footer.setAttribute("class", "ad-card-footer");
-              footer.innerHTML = "<small><ons-icon icon=\"external-link\"></ons-icon> " + json[i].adLink + "</small>";
+              //create card footer **Took out for now
+              //var footer = document.createElement("div");
+              //footer.setAttribute("class", "ad-card-footer");
+              //footer.innerHTML = "<small><ons-icon icon=\"external-link\"></ons-icon> " + json[i].adLink + "</small>";
               //remove spinner
               document.querySelector("#article-list-spinner").style.display = "none";
               //append content
@@ -124,7 +135,7 @@
               if (textOnlyMode === false) {
                 flexbox.appendChild(img);
               }
-              card.appendChild(footer);
+              //card.appendChild(footer);
               document.querySelector("#article-list").appendChild(card);//
 
             } else {
@@ -206,7 +217,7 @@
           pageid: id
         }})
         .then(function(page) {
-          //console.log("Page Name: ", page.name);//
+          console.log("Page Name: ", page.name);//
 
           var request = new XMLHttpRequest();
 
@@ -218,7 +229,7 @@
 
             if (this.readyState === DONE) {
                 var json = JSON.parse(request.responseText);
-                //console.log("Response Text: " + request.responseText);
+                console.log("Response Text: " + request.responseText);
 
                 //remove spinner
                 document.querySelector("#single-article-spinner").style.display = "none";
@@ -263,6 +274,9 @@
   /* End Load Home Page Function */
 
   document.addEventListener('init', function(event) {
+    var hasTestedConnection = false;
+
+    console.log("Page initialized");
     var page = event.target;
 
     if (event.target.matches("#home")) {
@@ -292,10 +306,12 @@
 
       function InitiateSpeedDetection() {
           ShowProgressMessage("Loading the image, please wait...");
-          window.setTimeout(MeasureConnectionSpeed, 1);
+          if (hasTestedConnection === false) {
+            window.setTimeout(MeasureConnectionSpeed, 1);
+          }
       };
 
-      if (window.addEventListener) {
+      if (window.addEventListener && hasTestedConnection) {
           window.addEventListener('load', InitiateSpeedDetection, false);
       } else if (window.attachEvent) {
           window.attachEvent('onload', InitiateSpeedDetection);
@@ -305,6 +321,8 @@
           var startTime, endTime;
           var download = new Image();
           download.onload = function () {
+              hasTestedConnection = true;
+              console.log("Tested Connection? " + hasTestedConnection)
               endTime = (new Date()).getTime();
               showResults();
               var duration = (endTime - startTime) / 1000;

@@ -33,6 +33,7 @@ img {
 .article-card>.flexbox, .ad-card>.flexbox {
   display:flex;
   align-items: center;
+  justify-content: center; 
 }
 
 .article-card>.flexbox>img {
@@ -49,8 +50,7 @@ img {
   color: black;
   border-top:1px solid rgba(0,0,0,0.2);
   padding:0.5rem;
-  /* display:flex; turned off for now */
-  display: none;
+  display:flex;
   flex-flow: column;
 }
 
@@ -74,10 +74,10 @@ img {
   color:white;
   bottom:0;
   left:0;
-}
+} //
 */
 
-#featured-wrapper {
+#featured-wrapper, #featured-wrapper-textonlymode {
   padding: 0.5rem 1rem;
   background-color: white;
   border-bottom: 5px solid #C41900;
@@ -88,12 +88,7 @@ img {
 }
 
 #featured-heading-textonlymode {
-  position: relative;
-  color: white;
-  padding: 1rem;
-  border-top: 5px solid black;
-  border-bottom: 5px solid black;
-  background-color: #C41900;
+
 }
 #featured-wrapper-textonlymode {
   position:relative;
