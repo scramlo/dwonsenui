@@ -1,0 +1,27 @@
+<div id="home">
+  <ons-toolbar>
+    <div class="center">
+      Drydenwire
+    </div>
+  </ons-toolbar>
+
+  <div id="article-list">
+    <span id="article-list-spinner" class="spinner">
+      <ons-icon size="35px" spin="true" icon="ion-load-d"></ons-icon>
+    </span>
+  </div>
+  <p id="load-more-wrapper">
+    <ons-button modifier="large--cta" id="articles-load" onclick="getArticles()">Load More</ons-button>
+  </p>
+</div>
+
+<ons-alert-dialog id="alert-text-only-dialog">
+  <div class="alert-dialog-title">Warning!</div>
+  <div class="alert-dialog-content">
+    Your connection is less than 500kbps. Would you like to enable text-only mode?
+  </div>
+  <div class="alert-dialog-footer">
+    <button class="alert-dialog-button" onclick="textOnlyModeChoice('true')">Yes</button>
+    <button class="alert-dialog-button" onclick="textOnlyModeChoice('false')">No</button>
+  </div>
+</ons-alert-dialog>
