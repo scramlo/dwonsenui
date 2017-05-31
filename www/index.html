@@ -43,7 +43,7 @@
 
   /* Load the home page function */
   function startHome() {
-    console.log("startHome() started." + " textOnlyMode = " + textOnlyMode);
+    //console.log("startHome() started." + " textOnlyMode = " + textOnlyMode);
     var articlesList = document.querySelector('#article-list');
     var startResults = 0;
     var articleLiArr = [];
@@ -60,7 +60,7 @@
 
         if (this.readyState === DONE) {
           var json = JSON.parse(request.responseText);//
-          console.log(json);
+          //console.log(json);
 
           //If this is the featured article (It is pushed to 0 index of array)
           if (startResults === 0) {
@@ -217,7 +217,7 @@
           pageid: id
         }})
         .then(function(page) {
-          console.log("Page Name: ", page.name);//
+          //console.log("Page Name: ", page.name);//
 
           var request = new XMLHttpRequest();
 
@@ -229,7 +229,7 @@
 
             if (this.readyState === DONE) {
                 var json = JSON.parse(request.responseText);
-                console.log("Response Text: " + request.responseText);
+                //console.log("Response Text: " + request.responseText);
 
                 //remove spinner
                 document.querySelector("#single-article-spinner").style.display = "none";
@@ -240,7 +240,7 @@
                 //find the wrapper
                 var wrapper = document.querySelector('#article-wrapper');
 
-                console.log("Text only mode: " + textOnlyMode);
+                //console.log("Text only mode: " + textOnlyMode);
 
                 if (textOnlyMode === false) {
                   //create image
@@ -258,7 +258,13 @@
                 //create body
                 var bodyWrapper = document.createElement("div");
                 bodyWrapper.setAttribute("id", "article-body-wrapper");
-                bodyWrapper.innerHTML = json.body;
+                if (textOnlyMode === false) {
+                  bodyWrapper.innerHTML = json.body;
+                } else { //if text only mode is on remove image tags
+                  var regxp = /<img[^>]*>/g;
+                  json.body = json.body.replace(regxp, "");
+                  bodyWrapper.innerHTML = json.body;
+                }
 
                 if (textOnlyMode === false) {
                   wrapper.appendChild(img);
@@ -276,7 +282,7 @@
   document.addEventListener('init', function(event) {
     var hasTestedConnection = false;
 
-    console.log("Page initialized");
+    ////console.log("Page initialized");
     var page = event.target;
 
     if (event.target.matches("#home")) {
@@ -289,10 +295,10 @@
       function ShowProgressMessage(msg) {
           if (console) {
               if (typeof msg == "string") {
-                  console.log(msg);
+                  //console.log(msg);
               } else {
                   for (var i = 0; i < msg.length; i++) {
-                      console.log(msg[i]);
+                      //console.log(msg[i]);
                   }
               }
           }
@@ -322,7 +328,7 @@
           var download = new Image();
           download.onload = function () {
               hasTestedConnection = true;
-              console.log("Tested Connection? " + hasTestedConnection)
+              //console.log("Tested Connection? " + hasTestedConnection)
               endTime = (new Date()).getTime();
               showResults();
               var duration = (endTime - startTime) / 1000;
