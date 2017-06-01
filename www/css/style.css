@@ -19,33 +19,20 @@ img {
   padding: 0 1rem;
 }
 
-.article-card, .ad-card {
+.ad-card {
   margin: 1rem;
   background-color:white;
   border-radius: 1px;
   box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
 
-.article-card:active {
-  background-color:#ccc;
-}
-
-.article-card>.flexbox, .ad-card>.flexbox {
+.ad-card>.flexbox {
   display:flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
 }
 
-.article-card>.flexbox>img {
-  width: 125px;
-  height: 125px;
-}
-
-.article-card>.flexbox>p {
-  padding:0.4rem;
-}
-
-.article-card>.article-card-footer, .ad-card>.ad-card-footer {
+.ad-card>.ad-card-footer {
   background-color: #eee;
   color: black;
   border-top:1px solid rgba(0,0,0,0.2);
@@ -66,21 +53,11 @@ img {
   position:relative;
 }
 
-/* this was similar to the website. But I am trying something else without overlaying heading
-#featured-heading {
-  position: absolute;
-  background-color: rgba(0,0,0,0.5);
-  padding: 1rem;
-  color:white;
-  bottom:0;
-  left:0;
-} //
-*/
-
 #featured-wrapper, #featured-wrapper-textonlymode {
   padding: 0.5rem 1rem;
   background-color: white;
   border-bottom: 5px solid #C41900;
+  margin-top:44px;
 }
 
 #featured-heading:active {
@@ -123,4 +100,23 @@ img {
 
 #alert-text-only>span {
   float:right;
+}
+
+.article-card {
+  margin: 1rem;
+  background-color:white;
+  border-radius: 1px;
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+}
+
+.article-card:active {
+  background-color: #ccc;
+}
+
+.article-card-info {
+  padding: 0rem 1rem 1rem 1rem;
+}
+
+.muted {
+  color: #999;
 }

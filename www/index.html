@@ -18,6 +18,25 @@
   //on document init
   ons.ready(function() {
 
+    //Load Facebook SDK
+    window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1853590978225194', //1881795055435250 is drydenwire.com
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();
+    };
+
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) {return;}
+       js = d.createElement(s); js.id = id;
+       js.src = "http://connect.facebook.net/en_US/sdk.js";//
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+
     var hasTestedConnection = false;
 
     //console.log("Page initialized");
@@ -152,7 +171,7 @@
       var DONE = this.DONE;
 
       if (this.readyState === DONE) {
-        var json = JSON.parse(request.responseText);//
+        var json = JSON.parse(request.responseText);
         //console.log(json);
 
         //If this is the featured article (It is pushed to 0 index of array)
@@ -192,6 +211,9 @@
         }
 
         for (i=1;i<Object.keys(json).length;i++) {
+
+          /* IF THIS IS AN ADVERTISEMENT */
+
           if (json[i].ad === true) {
             //create card
             var card = document.createElement("div");
@@ -217,10 +239,7 @@
               flexbox.appendChild(adTitle);
               flexbox.setAttribute("onclick", "openLink(\"" + json[i].adLink + "\")");
             }
-            //create card footer **Took out for now
-            //var footer = document.createElement("div");
-            //footer.setAttribute("class", "ad-card-footer");
-            //footer.innerHTML = "<small><ons-icon icon=\"external-link\"></ons-icon> " + json[i].adLink + "</small>";
+
             //remove spinner
             document.querySelector("#article-list-spinner").style.display = "none";
             //append content
@@ -228,49 +247,58 @@
             if (textOnlyMode === false) {
               flexbox.appendChild(img);
             }
-            //card.appendChild(footer);
-            document.querySelector("#article-list").appendChild(card);//
+            document.querySelector("#article-list").appendChild(card);
 
-          } else {
+          } else { /* IF THIS IS AN ARTICLE */
+
+            var articlePageId = json[i].pageid;
+            var articleImgUrl = json[i].imgUrl;
+            var articleTitle = json[i].title; // not working for some reason
+            var articleAuthor = json[i].author;
+            var articleDate = json[i].date;
+            var articleUrl = json[i].url;
+
             //create card//
             var card = document.createElement("div");
             card.setAttribute("class", "article-card");
-            card.setAttribute("data-pageid", json[i].pageid)
-            //create flexbox
-            var flexbox = document.createElement("div");
-            flexbox.setAttribute("class", "flexbox");
+            card.setAttribute("data-pageid", articlePageId);
+            card.setAttribute("data-url", articleUrl);
 
             if (textOnlyMode === false) {
               //create thumbnail
               var img = document.createElement("img");
-              img.setAttribute("src", json[i].thumbUrl);
+              img.setAttribute("class", "article-card-image");
+              img.setAttribute("src", articleImgUrl);
             }
             //create title
-            var title = document.createElement("p");//
-            title.innerHTML = json[i].title;
-            //create card footer
-            var footer = document.createElement("div");
-            footer.setAttribute("class", "article-card-footer");
-            footer.innerHTML = "<small><ons-icon icon=\"user\"></ons-icon> By " + json[i].author + "</small><small><ons-icon icon=\"calendar\"></ons-icon> " + json[i].date + "</small>";
+            var articleInfo = document.createElement("p");
+            articleInfo.setAttribute("class", "article-card-info")
+            var articleTitle = document.createElement("strong");
+            articleTitle.innerHTML = json[i].title + "<br>";
+            var articleMeta = document.createElement("small");
+            articleMeta.setAttribute("class", "muted");
+            articleMeta.innerHTML = "<ons-icon icon=\"user\"></ons-icon> By " + articleAuthor + " &#8226; <ons-icon icon=\"calendar\"></ons-icon> " + articleDate + " &#8226; <ons-icon icon=\"bullhorn\"></ons-icon> <span class=\"share-count\"></span>";
             //remove spinner
             document.querySelector("#article-list-spinner").style.display = "none";
             //append content
-            card.appendChild(flexbox);
             if (textOnlyMode === false) {
-              flexbox.appendChild(img);
+              card.appendChild(img);
             }
-            flexbox.appendChild(title);
-            card.appendChild(footer);
+            articleInfo.appendChild(articleTitle);
+            articleInfo.appendChild(articleMeta);
+            card.appendChild(articleInfo);
             document.querySelector("#article-list").appendChild(card);
-          }
+
+          } //end if is article
 
           //update the next starting point for pulling articles
           startResults += 1;
-        }
+        } //end for each article
 
         addEventHandlersToArticles();
-      }
-    }
+        addSharestoArticles();
+      } //end XHR request on state change === done
+    } // end XHR request on state change
 
   } //end get articles function
 
@@ -292,6 +320,34 @@
       })
     }
 
+  }
+
+  function addSharestoArticles() {
+    var articles = document.getElementsByClassName("article-card");
+    var urls = [];
+    for (var i = 0; i < articles.length; i++) {
+      urls.push(articles[i].dataset.url);
+    }
+
+    var getCountRequest = new XMLHttpRequest();
+    getCountRequest.open('GET', 'http://graph.facebook.com/?ids=' + urls);
+    getCountRequest.send();
+    getCountRequest.onreadystatechange = function () {
+      var DONE = this.DONE;
+      if (this.readyState === DONE) {
+        var articlesJSON = JSON.parse(getCountRequest.responseText);
+        console.log(articlesJSON);
+        var shareElements = document.getElementsByClassName("share-count");
+        for(var propName in articlesJSON) {
+          if(articlesJSON.hasOwnProperty(propName)) {
+            var propValue = articlesJSON[propName];
+            for (var n = 0; n < shareElements.length; n++) {
+              shareElements[n].innerHTML = JSON.stringify(propValue.share.share_count);
+            }
+          }
+        }
+      } //end if ready state is done
+    } //end on ready state change
   }
 
   //function to open article
