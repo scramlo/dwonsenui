@@ -277,7 +277,7 @@
             articleTitle.innerHTML = json[i].title + "<br>";
             var articleMeta = document.createElement("small");
             articleMeta.setAttribute("class", "muted");
-            articleMeta.innerHTML = "<ons-icon icon=\"user\"></ons-icon> By " + articleAuthor + " &#8226; <ons-icon icon=\"calendar\"></ons-icon> " + articleDate + " &#8226; <ons-icon icon=\"bullhorn\"></ons-icon> <span data-shared=\"false\" class=\"share-count\"></span>";
+            articleMeta.innerHTML = "<ons-icon icon=\"user\"></ons-icon> By " + articleAuthor + " &#8226; <ons-icon icon=\"calendar\"></ons-icon> " + articleDate + " &#8226; <ons-icon icon=\"facebook-official\"></ons-icon> <span data-shared=\"false\" class=\"share-count\"></span>";
             //remove spinner
             document.querySelector("#article-list-spinner").style.display = "none";
             //append content
@@ -340,7 +340,6 @@
         for (var articleObj in articlesJSON) {
           articlesArr.push(articleObj);
         }
-        console.log(articlesArr);
         var shareElements = document.getElementsByClassName("share-count");
         //console.log(shareElements);
         for (var i = 0; i < shareElements.length; i++) {
