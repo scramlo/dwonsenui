@@ -124,7 +124,6 @@
 
       MeasureConnectionSpeed();
 
-
     } //End if is home
 
   }); //End ons ready
@@ -270,7 +269,19 @@
               img.setAttribute("class", "article-card-image");
               img.setAttribute("src", articleImgUrl);
             }
-            //create title
+            //create flex box to hold article info and share dots
+            var flexbox = document.createElement("div");
+            flexbox.setAttribute("class", "article-card-flexbox");
+
+            //create share dots
+            var shareDots = document.createElement("p");
+            shareDots.setAttribute("class", "share-dots");
+            shareDots.setAttribute("data-url", articleUrl);
+            var dotsIcon = document.createElement("ons-icon");
+            dotsIcon.setAttribute("icon", "ellipsis-h");
+            shareDots.appendChild(dotsIcon);
+
+            //create article info
             var articleInfo = document.createElement("p");
             articleInfo.setAttribute("class", "article-card-info")
             var articleTitle = document.createElement("strong");
@@ -278,15 +289,19 @@
             var articleMeta = document.createElement("small");
             articleMeta.setAttribute("class", "muted");
             articleMeta.innerHTML = "<ons-icon icon=\"user\"></ons-icon> By " + articleAuthor + " &#8226; <ons-icon icon=\"calendar\"></ons-icon> " + articleDate + " &#8226; <ons-icon icon=\"facebook-official\"></ons-icon> <span data-shared=\"false\" class=\"share-count\"></span>";
+
             //remove spinner
             document.querySelector("#article-list-spinner").style.display = "none";
+
             //append content
             if (textOnlyMode === false) {
               card.appendChild(img);
             }
+
             articleInfo.appendChild(articleTitle);
             articleInfo.appendChild(articleMeta);
             card.appendChild(articleInfo);
+            card.appendChild(shareDots);
             document.querySelector("#article-list").appendChild(card);
 
           } //end if is article
@@ -304,6 +319,8 @@
 
   function addEventHandlersToArticles() {
     var articles = document.getElementsByClassName("article-card");
+    var shareDots = document.getElementsByClassName("share-dots");
+
     if (textOnlyMode === true) {
       var featuredArticle = document.getElementById("featured-wrapper-textonlymode");
     } else {
@@ -320,7 +337,32 @@
       })
     }
 
+    for (var i = 0; i < shareDots.length; i++) {
+      shareDots[i].addEventListener("click", function(event) {
+        event.stopPropagation();
+        var popover = document.getElementById("popover-inner");
+        var p = document.createElement("p");
+        var fbButton = document.createElement("ons-button");
+        fbButton.innerHTML = "<ons-icon icon=\"facebook-official\"></ons-icon>";
+        p.appendChild(fbButton);
+        popover.appendChild(p);
+        showPopover(this.firstChild);
+      })
+    }
+
   }
+
+  var showPopover = function(target) {
+  document
+    .getElementById('popover')
+    .show(target);
+  };
+
+  var hidePopover = function() {
+    document
+      .getElementById('popover')
+      .hide();
+  };
 
   function addSharestoArticles() {
     var articles = document.getElementsByClassName("article-card");
@@ -345,6 +387,7 @@
         for (var i = 0; i < shareElements.length; i++) {
           if (shareElements[i].dataset.shared === "false") {
             shareElements[i].innerHTML = JSON.stringify(articlesJSON[articlesArr[i]].share.share_count);
+            shareElements[i].dataset.shared = "true";
           }
         }
       } //end if ready state is done
@@ -377,7 +420,10 @@
               document.querySelector("#single-article-spinner").style.display = "none";
 
               //date for title
-              document.querySelector('#article-heading').innerHTML = json.date;
+              var origTitle = json.title;
+              var shortTitle = json.title.split("").splice(0,23).join("") + "...";
+
+              document.querySelector('#article-heading').innerHTML = shortTitle;
 
               //find the wrapper
               var wrapper = document.querySelector('#article-wrapper');
