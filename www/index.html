@@ -343,6 +343,12 @@
         event.stopPropagation();
         document.getElementById("index-facebook-share").dataset.url = this.dataset.url;
         document.getElementById("index-facebook-share").setAttribute("onclick", "shareToFacebook('" + this.dataset.url + "', '" + this.dataset.title + "')");
+        document.getElementById("index-twitter-share").dataset.url = this.dataset.url;
+        document.getElementById("index-twitter-share").setAttribute("onclick", "shareToTwitter('" + this.dataset.url + "', '" + this.dataset.title + "')");
+        document.getElementById("index-email-share").dataset.url = this.dataset.url;
+        document.getElementById("index-email-share").setAttribute("onclick", "shareToEmail('" + this.dataset.url + "', '" + this.dataset.title + "')");
+        document.getElementById("index-text-share").dataset.url = this.dataset.url;
+        document.getElementById("index-text-share").setAttribute("onclick", "shareToText('" + this.dataset.url + "', '" + this.dataset.title + "')");
         showPopover(this.firstChild);
       })
     }
@@ -359,6 +365,21 @@
 
   function shareToFacebook(url, title) {
     window.open("http://www.facebook.com/share.php?u=" + url + "&title=" + title, "_blank", "location=yes");
+    return false;
+  }
+
+  function shareToTwitter(url, title) {
+    window.open("http://twitter.com/intent/tweet?status=" + title + "+" + url, "_blank", "location=yes");
+    return false;
+  }
+
+  function shareToEmail(url, title) {
+    window.open("mailto:?subject=" + title + "&body=" + url);
+    return false;
+  }
+
+  function shareToText(url, title) {
+    window.open("sms:?&body=Check out " + title + " on Drydenwire: " + url);
     return false;
   }
 
