@@ -277,6 +277,7 @@
             var shareDots = document.createElement("p");
             shareDots.setAttribute("class", "share-dots");
             shareDots.setAttribute("data-url", articleUrl);
+            shareDots.setAttribute("data-title", articleTitle);
             var dotsIcon = document.createElement("ons-icon");
             dotsIcon.setAttribute("icon", "ellipsis-h");
             shareDots.appendChild(dotsIcon);
@@ -341,23 +342,25 @@
       shareDots[i].addEventListener("click", function(event) {
         event.stopPropagation();
         document.getElementById("index-facebook-share").dataset.url = this.dataset.url;
+        document.getElementById("index-facebook-share").setAttribute("onclick", "shareToFacebook('" + this.dataset.url + "', '" + this.dataset.title + "')");
         showPopover(this.firstChild);
       })
     }
 
   }
 
-  var showPopover = function(target) {
-  document
-    .getElementById('popover')
-    .show(target);
+  function showPopover(target) {
+  document.getElementById('popover').show(target);
   };
 
-  var hidePopover = function() {
-    document
-      .getElementById('popover')
-      .hide();
+  function hidePopover() {
+    document.getElementById('popover').hide();
   };
+
+  function shareToFacebook(url, title) {
+    window.open("http://www.facebook.com/share.php?u=" + url + "&title=" + title, "_blank", "location=yes");
+    return false;
+  }
 
   function addSharestoArticles() {
     var articles = document.getElementsByClassName("article-card");
