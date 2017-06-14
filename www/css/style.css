@@ -128,3 +128,28 @@ img {
 .muted {
   color: #999;
 }
+
+:checked + .tab-bar__button {
+   color: #C41900;
+ }
+
+#index-popover-inner {
+  width:100%;
+  margin-top:2rem;
+  display:flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#index-text-share {
+  background-color:#36E250;
+}
+
+#index-twitter-share {
+  background-color: #4099FF;
+}
+
+#index-email-share {
+  background-color: #0bc3fb;
+}

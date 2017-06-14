@@ -46,7 +46,7 @@
 
       /* Test Connection */
       //JUST AN EXAMPLE, PLEASE USE YOUR OWN PICTURE!
-      var imageAddr = "http://drydenwire.com/site/assets/files/2665/speedtestimage.jpg";
+      var imageAddr = "https://drydenwire.com/site/assets/files/2665/speedtestimage.jpg";
       var downloadSize = 27000; //bytes
 
       function ShowProgressMessage(msg) {
@@ -163,7 +163,7 @@
 
     var request = new XMLHttpRequest();
 
-    request.open('POST', 'http://drydenwire.com/api/json-news');
+    request.open('POST', 'https://drydenwire.com/api/json-news');
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     request.send("startResults=" + startResults);
     request.onreadystatechange = function () {
@@ -340,12 +340,7 @@
     for (var i = 0; i < shareDots.length; i++) {
       shareDots[i].addEventListener("click", function(event) {
         event.stopPropagation();
-        var popover = document.getElementById("popover-inner");
-        var p = document.createElement("p");
-        var fbButton = document.createElement("ons-button");
-        fbButton.innerHTML = "<ons-icon icon=\"facebook-official\"></ons-icon>";
-        p.appendChild(fbButton);
-        popover.appendChild(p);
+        document.getElementById("index-facebook-share").dataset.url = this.dataset.url;
         showPopover(this.firstChild);
       })
     }
@@ -406,7 +401,7 @@
 
         var request = new XMLHttpRequest();
 
-        request.open('POST', 'http://drydenwire.com/api/json-news');
+        request.open('POST', 'https://drydenwire.com/api/json-news');
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         request.send("articleId=" + page.data.pageid);
         request.onreadystatechange = function () {
@@ -483,6 +478,8 @@
   <ons-tabbar animation="none">
     <ons-tab id="home" label="home" icon="home" page="navigator.html" active></ons-tab>
     <ons-tab label="obituaries" page="obituaries.html" icon="bank"></ons-tab>
+    <ons-tab label="alerts" page="obituaries.html" icon="bell"></ons-tab>
+    <ons-tab label="more" page="obituaries.html" icon="ellipsis-h"></ons-tab>
   </ons-tabbar>
 
 </body>
