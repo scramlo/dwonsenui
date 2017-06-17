@@ -3,7 +3,7 @@
   display: block;
 }
 
-.navigation-bar {
+#toolbar, #toolbar-center {
   background-color: #C41900;
 }
 
@@ -112,7 +112,7 @@ img {
 }
 
 .article-card:active {
-  background-color: #ccc;
+  /* background-color: #ccc; */
 }
 
 .article-card-info {
